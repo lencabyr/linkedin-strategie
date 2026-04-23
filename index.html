@@ -556,6 +556,31 @@
 
   @media (max-width: 500px) { .topic-pills { gap: 5px; } .topic-pill { font-size: 12px; } }
 
+  /* ── ANALYZER ── */
+  .analyzer-textarea { width: 100%; min-height: 200px; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--border-radius-lg); color: var(--text); font-family: var(--font-sans); font-size: 13px; line-height: 1.7; padding: 14px 16px; resize: vertical; outline: none; transition: border-color 0.15s; }
+  .analyzer-textarea:focus { border-color: var(--accent); }
+  .analyzer-textarea::placeholder { color: var(--faint); }
+  .analyze-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 24px; background: var(--accent); color: white; border: none; border-radius: var(--border-radius-md); font-family: var(--font-sans); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .analyze-btn:hover { opacity: 0.88; }
+  .analyze-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  .analyze-btn.loading .btn-spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .analyzer-result { margin-top: 24px; display: none; }
+  .analyzer-result.visible { display: block; }
+  .result-section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px 20px; margin-bottom: 12px; }
+  .result-section h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+  .result-section p, .result-section li { font-size: 13px; color: var(--muted); line-height: 1.75; }
+  .result-section ul { padding-left: 1.2rem; }
+  .result-section li { margin-bottom: 5px; }
+  .score-row { display: flex; align-items: center; gap: 14px; margin: 10px 0; }
+  .score-num { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--accent); min-width: 52px; }
+  .score-bar-bg { flex: 1; height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--green)); }
+  .score-label { font-size: 13px; color: var(--muted); }
+  .analyzer-error { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: var(--border-radius-md); padding: 12px 16px; margin-top: 16px; font-size: 13px; color: var(--red); display: none; }
+  .analyzer-error.visible { display: block; }
+
   .mobile-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.6); z-index: 99;
@@ -591,23 +616,26 @@
     </div>
     <div class="sidebar-nav">
       <div class="nav-section-label">Přehled</div>
+      <a class="nav-item" onclick="showSection('pruvodce')" href="#">
+        <span class="nav-icon">🗺️</span> Průvodce pro začátečníky
+      </a>
       <a class="nav-item active" onclick="showSection('prehled')" href="#">
-        <span class="nav-icon">📊</span> Klíčová čísla
+        <span class="nav-icon">📊</span> LinkedIn v roce 2026
       </a>
       <div class="nav-section-label">Strategie</div>
+      <a class="nav-item" onclick="showSection('osobni')" href="#">
+        <span class="nav-icon">👤</span> TOP osobní profil
+      </a>
       <a class="nav-item" onclick="showSection('firemni')" href="#">
         <span class="nav-icon">🏢</span> Firemní stránka pod lupou
-      </a>
-      <a class="nav-item" onclick="showSection('algoritmus')" href="#">
-        <span class="nav-icon">⚙️</span> Jak algoritmus doopravdy funguje
       </a>
       <a class="nav-item" onclick="showSection('co-nefunguje')" href="#">
         <span class="nav-icon">🔄</span> Tohle už nedělejte
       </a>
-      <a class="nav-item" onclick="showSection('osobni')" href="#">
-        <span class="nav-icon">👤</span> TOP osobní profil
-      </a>
       <div class="nav-section-label">Nástroje</div>
+      <a class="nav-item" onclick="showSection('analyzer')" href="#">
+        <span class="nav-icon">🔍</span> Analyzátor profilu
+      </a>
       <a class="nav-item" onclick="showSection('checklist')" href="#">
         <span class="nav-icon">✅</span> Check-list správného postu
       </a>
@@ -620,7 +648,10 @@
       <a class="nav-item" onclick="showSection('temata')" href="#">
         <span class="nav-icon">💬</span> Nevím, co psát
       </a>
-      <div class="nav-section-label">Good to know</div>
+      <div class="nav-section-label">Pro pokročilé</div>
+      <a class="nav-item" onclick="showSection('algoritmus')" href="#">
+        <span class="nav-icon">⚙️</span> Jak algoritmus doopravdy funguje
+      </a>
       <a class="nav-item" onclick="showSection('360brew')" href="#">
         <span class="nav-icon">🤖</span> 360Brew
       </a>
@@ -636,18 +667,120 @@
   <div class="main">
     <header class="topbar">
       <button class="hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="topbar-title" id="topbar-title">Přehled – Klíčová čísla</span>
+      <span class="topbar-title" id="topbar-title">Přehled – LinkedIn v roce 2026</span>
       <span class="topbar-tag">2025–2026</span>
     </header>
 
     <div class="content">
 
+      <!-- ══ PRŮVODCE ══ -->
+      <div class="section" id="section-pruvodce">
+        <div class="section-h1">Průvodce pro začátečníky</div>
+        <div class="section-sub">LinkedIn za 5 minut – vše, co potřebujete vědět na start</div>
+
+        <div class="info-box blue">
+          <strong>Jste na LinkedIn noví nebo nevíte, kde začít?</strong>
+          Tato stránka vás provede krok za krokem. Nemusíte číst vše najednou – projděte průvodce a pak se vraťte k detailům v jednotlivých sekcích.
+        </div>
+
+        <div class="section-h2">Co je LinkedIn a proč ho mít?</div>
+        <div class="prose">LinkedIn je profesní síť s více než 1 miliardou členů. Lidé ho používají k budování kariéry, hledání klientů, sdílení odbornosti a networkingu. Pokud pracujete v B2B nebo chcete být vidět jako expert ve svém oboru, LinkedIn je dnes nejdůležitější platforma pro to.</div>
+
+        <div class="section-h2">5 kroků, jak začít</div>
+
+        <div class="principle-list">
+          <div class="principle-item">
+            <div class="principle-num">1</div>
+            <div class="principle-body">
+              <strong>Vyplňte profil – je to vaše vizitka</strong>
+              <span>Profilová fotka (profesionální), headline (kdo jste a komu pomáháte), About sekce (váš příběh). Bez toho nemá smysl nic jiného dělat. Profil bez fotky a headlinu nikdo nebere vážně.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">2</div>
+            <div class="principle-body">
+              <strong>Připojte se ke správným lidem</strong>
+              <span>Začněte s kolegy, klienty, obchodními partnery a lidmi z vašeho oboru. LinkedIn funguje jako síť – čím relevantnější kontakty, tím cílenější obsah uvidíte i vy sami.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">3</div>
+            <div class="principle-body">
+              <strong>Začněte sledovat, ne jen posílat žádosti</strong>
+              <span>Než začnete publikovat, strávte 1–2 týdny sledováním feedu. Sledujte, co funguje u lidí ve vašem oboru, co lidé komentují a co ignorují. Učte se od ostatních.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">4</div>
+            <div class="principle-body">
+              <strong>Komentujte dříve, než začnete psát</strong>
+              <span>Nejjednodušší způsob, jak se začít projevovat, jsou smysluplné komentáře pod cizími příspěvky. Přidejte svůj pohled, zkušenost nebo otázku. Algoritmus si vás začne všímat a lidé vás začnou sledovat.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">5</div>
+            <div class="principle-body">
+              <strong>Napište první příspěvek</strong>
+              <span>Nemusí být dokonalý. Zkuste se představit, sdílet jednu zkušenost z práce nebo odpovědět na otázku, kterou vám někdo nedávno položil. Jeden příspěvek týdně stačí na start.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-h2">Kde v této aplikaci najdete co</div>
+        <table class="data-table">
+          <thead><tr><th>Chci...</th><th>Jděte do sekce</th></tr></thead>
+          <tbody>
+            <tr><td>Pochopit, jak LinkedIn rozhoduje, co lidem ukáže</td><td class="highlight"><a href="#" onclick="showSection('algoritmus')" style="color:var(--accent2);text-decoration:none;">Jak algoritmus doopravdy funguje</a></td></tr>
+            <tr><td>Vědět, co přestalo fungovat a čeho se vyvarovat</td><td class="highlight"><a href="#" onclick="showSection('co-nefunguje')" style="color:var(--accent2);text-decoration:none;">Tohle už nedělejte</a></td></tr>
+            <tr><td>Optimalizovat svůj osobní profil</td><td class="highlight"><a href="#" onclick="showSection('osobni')" style="color:var(--accent2);text-decoration:none;">TOP osobní profil</a></td></tr>
+            <tr><td>Zlepšit firemní stránku</td><td class="highlight"><a href="#" onclick="showSection('firemni')" style="color:var(--accent2);text-decoration:none;">Firemní stránka pod lupou</a></td></tr>
+            <tr><td>Vybrat správný formát příspěvku</td><td class="highlight"><a href="#" onclick="showSection('formaty')" style="color:var(--accent2);text-decoration:none;">Formáty na výběr</a></td></tr>
+            <tr><td>Mít checklist při psaní příspěvku</td><td class="highlight"><a href="#" onclick="showSection('checklist')" style="color:var(--accent2);text-decoration:none;">Check-list správného postu</a></td></tr>
+            <tr><td>Najít inspiraci na téma příspěvku</td><td class="highlight"><a href="#" onclick="showSection('temata')" style="color:var(--accent2);text-decoration:none;">Nevím, co psát</a></td></tr>
+            <tr><td>Nechat si zkontrolovat profil od AI</td><td class="highlight"><a href="#" onclick="showSection('analyzer')" style="color:var(--accent2);text-decoration:none;">Analyzátor profilu</a></td></tr>
+          </tbody>
+        </table>
+
+        <div class="section-h2">3 nejčastější chyby začátečníků</div>
+        <div class="cards-grid">
+          <div class="card red">
+            <div class="card-label">Vyhněte se</div>
+            <ul>
+              <li>Profil bez fotky nebo s nevhodnou fotkou</li>
+              <li>Headline = jen job title („Manažer v XY s.r.o.")</li>
+              <li>Příspěvky jen o firmě a produktech</li>
+              <li>Žádné komentáře, jen vlastní posty</li>
+              <li>Sdílení článků bez vlastního komentáře</li>
+            </ul>
+          </div>
+          <div class="card green">
+            <div class="card-label">Místo toho</div>
+            <ul>
+              <li>Profesionální fotka s přirozeným výrazem</li>
+              <li>Headline: Co děláte + komu pomáháte</li>
+              <li>Příspěvky o zkušenostech, insights, příbězích</li>
+              <li>Komentujte 5–10 minut před i po publikaci</li>
+              <li>Vždy přidejte vlastní pohled a přidanou hodnotu</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-top: 28px; padding: 24px; background: var(--bg2); border: 1px solid var(--accent-border); border-radius: var(--border-radius-lg); text-align: center;">
+          <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Potřebujete pomoc s rozjezdem?</div>
+          <div style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Pojďme se spojit a probrat, jak LinkedIn využít pro váš konkrétní cíl.</div>
+          <a href="https://www.linkedin.com/in/lencabyrtusova/" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 11px 28px; background: var(--accent); color: white; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; text-decoration: none; transition: opacity 0.15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            Pojďme se spojit →
+          </a>
+        </div>
+      </div>
+
       <!-- ══ PŘEHLED ══ -->
       <div class="section active" id="section-prehled">
-        <div class="hero">
-          <div class="hero-eyebrow">LinkedIn snadno a rychle</div>
-          <h2>Algoritmus se změnil.<br>Váš brand ale zůstává</h2>
 
+        <div class="hero">
+          <div class="hero-eyebrow">LinkedIn v roce 2026</div>
+          <h2>Jste na LinkedIn.<br>Ale vidí vás vůbec někdo?</h2>
+          <p style="font-size:15px;color:var(--muted);line-height:1.8;max-width:560px;margin-top:12px;">Organický dosah klesá, firemní stránky jsou takřka neviditelné a konkurence přibývá. Přesto právě teď vzniká největší příležitost pro ty, kteří vědí jak na to.</p>
         </div>
 
         <div class="stats-row">
@@ -665,7 +798,9 @@
           </div>
         </div>
 
-
+        <div class="section-h2">Příležitost pro každého. Vás i vaši firmu</div>
+        <div class="prose">Firmy investují do firemní stránky – tvoří příspěvky, sdílejí novinky, představují produkty. A pak čekají na výsledky, které nepřicházejí. Důvod je prostý: firemní stránky dnes osloví průměrně jen <strong style="color:var(--red)">1,6 % followerů</strong>. Zbytek to nikdy neuvidí.</div>
+        <div class="prose">Algoritmus LinkedIn upřednostňuje lidi před logy. Osobní profily dosahují <strong style="color:var(--green)">561× většího dosahu</strong> než firemní stránky. Největší příležitost pro firmu tedy není lepší grafika na firemním profilu – jsou to lidé uvnitř firmy.</div>
 
         <div class="section-h2">Osobní profil vs. firemní stránka</div>
         <table class="data-table">
@@ -678,21 +813,21 @@
           </tbody>
         </table>
 
-        <div class="section-h2">Uživatelé na LinkedIn</div>
-        <table class="data-table">
-          <thead><tr><th>Segment uživatelů</th><th>2025</th><th>2026</th><th>Trend</th></tr></thead>
-          <tbody>
-            <tr><td class="highlight">Aktivní tvůrci (1×+ týdně)</td><td>1,4 %</td><td class="green-text">1,8 %</td><td class="green-text">↑ Roste</td></tr>
-            <tr><td class="highlight">Příležitostní tvůrci (1×+ za 3 měs.)</td><td>8,9 %</td><td class="green-text">12,2 %</td><td class="green-text">↑ Roste</td></tr>
-            <tr><td class="highlight">Aktivní engageři (bez postování)</td><td>26,3 %</td><td class="green-text">29 %</td><td class="green-text">↑ Roste</td></tr>
-            <tr><td class="highlight">Tichá komunita (scrolleři)</td><td>53 %</td><td class="amber-text">42 %</td><td class="amber-text">↓ Klesá</td></tr>
-            <tr><td class="highlight">Dormantní členové (odcházejí)</td><td>10,4 %</td><td class="red-text">15 %</td><td class="red-text">↑ Roste</td></tr>
-          </tbody>
-        </table>
-        <div class="info-box blue">
-          <strong>Co to pro vás znamená</strong>
-          Více lidí tvoří, více lidí reaguje, zároveň více lidí LinkedIn opouští. Platforma se mění, a tím vzniká více příležitostí být na LinkedIn opravdu vidět. Začněte s budováním svého jména, své autority. Právě dnes.
+        <div class="section-h2">Psaní na LinkedIn není těžké</div>
+        <div class="prose">Největší brzdou bývá strach z toho, co napsat nebo jak to udělat správně. Tahle aplikace vám ukáže přesně jak na to – od strategie přes formáty až po checklist každého postu. A pokud budete chtít pomoci, jsme tady.</div>
+
+        <div class="info-box green">
+          <strong>Příležitost je teď</strong>
+          Méně než 2 % uživatelů LinkedIn pravidelně publikuje obsah. Trh není přesycený – je nedostatečně obsazený. Ti, kteří začnou budovat osobní brand dnes, budou mít náskok, který ostatní budou dohánět roky.
         </div>
+
+        <div style="text-align:center;margin:24px 0 8px;">
+          <a href="#" onclick="showSection('pruvodce')" style="display:inline-flex;align-items:center;gap:8px;padding:11px 24px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);border-radius:var(--border-radius-md);font-size:14px;font-weight:500;text-decoration:none;transition:opacity .15s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+            🗺️ Jsem LinkedIn začátečník →
+          </a>
+        </div>
+
+        <div class="section-h2">Co v této aplikaci najdete</div>
         <div class="cards-grid">
           <div class="card blue">
             <div class="card-label">Strategie</div>
@@ -713,6 +848,27 @@
             </ul>
           </div>
         </div>
+
+        <div class="section-h2">Uživatelé na LinkedIn</div>
+        <table class="data-table">
+          <thead><tr><th>Segment uživatelů</th><th>2025</th><th>2026</th><th>Trend</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">Aktivní tvůrci (1×+ týdně)</td><td>1,4 %</td><td class="green-text">1,8 %</td><td class="green-text">↑ Roste</td></tr>
+            <tr><td class="highlight">Příležitostní tvůrci (1×+ za 3 měs.)</td><td>8,9 %</td><td class="green-text">12,2 %</td><td class="green-text">↑ Roste</td></tr>
+            <tr><td class="highlight">Aktivní engageři (bez postování)</td><td>26,3 %</td><td class="green-text">29 %</td><td class="green-text">↑ Roste</td></tr>
+            <tr><td class="highlight">Tichá komunita (scrolleři)</td><td>53 %</td><td class="amber-text">42 %</td><td class="amber-text">↓ Klesá</td></tr>
+            <tr><td class="highlight">Dormantní členové (odcházejí)</td><td>10,4 %</td><td class="red-text">15 %</td><td class="red-text">↑ Roste</td></tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top: 32px; padding: 28px 24px; background: var(--bg2); border: 1px solid var(--accent-border); border-radius: var(--border-radius-lg); text-align: center;">
+          <div style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Chcete LinkedIn strategii na míru pro vás nebo váš tým?</div>
+          <div style="font-size: 13px; color: var(--muted); margin-bottom: 20px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.7;">Pomůžeme vám nastavit osobní profily, obsahovou strategii i employee advocacy program – krok za krokem.</div>
+          <a href="https://www.linkedin.com/in/lencabyrtusova/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 32px;background:var(--accent);color:white;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;text-decoration:none;transition:opacity .15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            Pojďme se spojit →
+          </a>
+        </div>
+
       </div>
 
       <!-- ══ ALGORITMUS ══ -->
@@ -931,6 +1087,17 @@
         <div class="section-h1">Firemní stránka pod lupou</div>
         <div class="section-sub">Nová realita, kterou přinesl rok 2026</div>
 
+        <div class="section-h2">Srovnání v číslech</div>
+        <table class="data-table">
+          <thead><tr><th>Metrika</th><th>Osobní profil</th><th>Firemní stránka</th></tr></thead>
+          <tbody>
+            <tr><td>Průměrný dosah (% followerů)</td><td class="green-text">8–12 %</td><td class="red-text">1,6 %</td></tr>
+            <tr><td>Změna dosahu od 2024</td><td class="amber-text">−40 až −50 %</td><td class="red-text">−60 až −66 %</td></tr>
+            <tr><td>Podíl na LinkedIn feedu</td><td class="green-text">Dominantní</td><td class="red-text">1–2 % (bylo 7 %)</td></tr>
+            <tr><td>Výkon oproti druhé kategorii</td><td class="green-text">561× více dosahu</td><td class="red-text">−</td></tr>
+          </tbody>
+        </table>
+
         <div class="info-box red">
           <strong>Kritická čísla</strong>
           Z každých 100 followerů firemní stránky uvidí příspěvek průměrně jen 1,6 z nich. Ještě před dvěma lety to bylo 4–5. Firemní obsah dnes zabírá pouhé 1–2 % toho, co lidé na LinkedIn vidí – v roce 2021 to bylo 7 %. Jinými slovy: 9 z 10 firemních stránek mluví do prázdna. Píší o produktech, sdílejí tiskové zprávy – a nikdo to nečte.
@@ -1124,6 +1291,14 @@
             <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
             <div class="cl-text">Zaznamenejte výsledky do content kalendáře</div>
           </div>
+        </div>
+
+        <div style="margin-top: 32px; padding: 24px; background: var(--bg2); border: 1px solid var(--accent-border); border-radius: var(--border-radius-lg); text-align: center;">
+          <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Chcete LinkedIn strategii na míru?</div>
+          <div style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Pojďme se spojit a probrat, jak z LinkedInu udělat skutečný nástroj pro váš byznys.</div>
+          <a href="https://www.linkedin.com/in/lencabyrtusova/" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 11px 28px; background: var(--accent); color: white; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; text-decoration: none; transition: opacity 0.15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            Pojďme se spojit →
+          </a>
         </div>
       </div>
 
@@ -1493,6 +1668,136 @@
         </div>
       </div>
 
+
+      <!-- ══ ANALYZER ══ -->
+      <div class="section" id="section-analyzer">
+        <div class="section-h1">Analyzátor profilu</div>
+        <div class="section-sub">AI analýza osobního profilu i firemní stránky – silné stránky, slabiny, konkrétní návrhy</div>
+
+        <div class="info-box blue">
+          <strong>Jak na to ve 3 krocích</strong>
+          1. Vyberte typ profilu níže. 2. Otevřete svůj LinkedIn profil a zkopírujte text ze všech relevantních sekcí. 3. Vložte obsah do pole a klikněte Analyzovat. Čím více obsahu vložíte, tím přesnější analýza.
+        </div>
+
+        <!-- TYPE SWITCHER -->
+        <div style="display:flex;gap:10px;margin:24px 0 20px;">
+          <button id="tab-personal" onclick="switchAnalyzerTab('personal')"
+            style="flex:1;padding:12px;border-radius:var(--border-radius-md);border:2px solid var(--accent);background:var(--accent-bg);color:var(--accent2);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;">
+            👤 Osobní profil
+          </button>
+          <button id="tab-company" onclick="switchAnalyzerTab('company')"
+            style="flex:1;padding:12px;border-radius:var(--border-radius-md);border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;">
+            🏢 Firemní stránka
+          </button>
+        </div>
+
+        <!-- PERSONAL HINTS -->
+        <div id="hints-personal">
+          <div class="section-h3">Co zkopírovat z osobního profilu</div>
+          <div class="cards-grid" style="margin-bottom:20px;">
+            <div class="card blue">
+              <div class="card-label">Povinné sekce</div>
+              <ul>
+                <li><strong>Headline</strong> – nadpis pod vaším jménem</li>
+                <li><strong>About / O mně</strong> – celý text sekce</li>
+                <li><strong>Pracovní zkušenosti</strong> – názvy pozic + popisy</li>
+              </ul>
+            </div>
+            <div class="card green">
+              <div class="card-label">Volitelné (zlepší přesnost)</div>
+              <ul>
+                <li><strong>Dovednosti</strong> – seznam skills</li>
+                <li><strong>Vzdělání</strong> – školy a obory</li>
+                <li><strong>Ukázka postu</strong> – jeden váš příspěvek</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPANY HINTS -->
+        <div id="hints-company" style="display:none;">
+          <div class="section-h3">Co zkopírovat z firemní stránky</div>
+          <div class="cards-grid" style="margin-bottom:20px;">
+            <div class="card blue">
+              <div class="card-label">Povinné sekce</div>
+              <ul>
+                <li><strong>Tagline</strong> – krátký popis pod logem</li>
+                <li><strong>O nás / About</strong> – celý text sekce</li>
+                <li><strong>Specializace</strong> – seznam oborů</li>
+              </ul>
+            </div>
+            <div class="card green">
+              <div class="card-label">Volitelné (zlepší přesnost)</div>
+              <ul>
+                <li><strong>Ukázka 2–3 postů</strong> – text příspěvků</li>
+                <li><strong>Počet followerů</strong> – přibližně</li>
+                <li><strong>Odvětví / Industry</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- INPUT -->
+        <div>
+          <label id="input-label" style="font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:8px;">Obsah osobního LinkedIn profilu</label>
+          <textarea class="analyzer-textarea" id="profile-input" placeholder="Sem vložte text z vašeho LinkedIn profilu – headline, About sekci, pracovní zkušenosti..."></textarea>
+          <button class="analyze-btn" id="analyze-btn" onclick="analyzeProfile()">
+            <div class="btn-spinner" id="btn-spinner"></div>
+            <span class="btn-label" id="btn-label">Analyzovat profil</span>
+          </button>
+        </div>
+
+        <div class="analyzer-error" id="analyzer-error"></div>
+
+        <!-- RESULTS -->
+        <div class="analyzer-result" id="analyzer-result">
+          <div class="section-h2" style="margin-top:0;">Výsledky analýzy</div>
+
+          <div class="result-section">
+            <h4>Celkové skóre</h4>
+            <div class="score-row">
+              <div class="score-num" id="score-num">–</div>
+              <div style="flex:1">
+                <div class="score-bar-bg"><div class="score-bar-fill" id="score-bar" style="width:0%"></div></div>
+                <div class="score-label" id="score-label" style="margin-top:6px"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-section">
+            <h4>✅ Silné stránky</h4>
+            <div id="result-pozitiva"></div>
+          </div>
+
+          <div class="result-section">
+            <h4>⚠️ Slabé stránky a příležitosti ke zlepšení</h4>
+            <div id="result-zlepseni"></div>
+          </div>
+
+          <div class="result-section">
+            <h4>✏️ Konkrétní návrhy přepsání</h4>
+            <div id="result-navrhy"></div>
+          </div>
+
+          <div class="result-section">
+            <h4>🎯 Doporučené prioritní kroky</h4>
+            <div id="result-priorita"></div>
+          </div>
+
+          <div class="result-section">
+            <h4>💡 Doporučení pro obsah</h4>
+            <div id="result-obsah"></div>
+          </div>
+
+          <div style="margin-top:20px;text-align:center;">
+            <button onclick="document.getElementById('analyzer-result').classList.remove('visible');document.getElementById('profile-input').value='';window.scrollTo(0,0);"
+              style="background:none;border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:13px;cursor:pointer;">
+              Nová analýza
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /layout -->
@@ -1500,8 +1805,9 @@
 <script>
 // ── NAVIGATION ──
 const sections = {
-  'prehled': 'Přehled – Klíčová čísla',
-  'algoritmus': 'Strategie – Jak algoritmus doopravdy funguje',
+  'pruvodce': 'Průvodce pro začátečníky',
+  'prehled': 'Přehled – LinkedIn v roce 2026',
+  'algoritmus': 'Pro pokročilé – Jak algoritmus doopravdy funguje',
   'co-nefunguje': 'Strategie – Tohle už nedělejte',
   'osobni': 'Strategie – TOP osobní profil',
   'firemni': 'Strategie – Firemní stránka pod lupou',
@@ -1509,7 +1815,8 @@ const sections = {
   'checklist': 'Nástroje – Check-list správného postu',
   'temata': 'Nástroje – Nevím, co psát',
   'principy': 'Nástroje – Desatero LinkedIn profilů',
-  '360brew': 'Good to know – 360Brew'
+  '360brew': 'Pro pokročilé – 360Brew',
+  'analyzer': 'Pro pokročilé – Analyzátor profilu'
 };
 
 function showSection(id) {
@@ -1584,6 +1891,193 @@ function resetChecklist() {
 function togglePersona(id) {
   const block = document.getElementById('pb-' + id);
   block.classList.toggle('open');
+}
+
+// ── ANALYZER ──
+let analyzerType = 'personal';
+
+function switchAnalyzerTab(type) {
+  analyzerType = type;
+  const isPersonal = type === 'personal';
+
+  document.getElementById('tab-personal').style.cssText = isPersonal
+    ? 'flex:1;padding:12px;border-radius:var(--border-radius-md);border:2px solid var(--accent);background:var(--accent-bg);color:var(--accent2);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;'
+    : 'flex:1;padding:12px;border-radius:var(--border-radius-md);border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;';
+  document.getElementById('tab-company').style.cssText = !isPersonal
+    ? 'flex:1;padding:12px;border-radius:var(--border-radius-md);border:2px solid var(--accent);background:var(--accent-bg);color:var(--accent2);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;'
+    : 'flex:1;padding:12px;border-radius:var(--border-radius-md);border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;';
+
+  document.getElementById('hints-personal').style.display = isPersonal ? 'block' : 'none';
+  document.getElementById('hints-company').style.display = !isPersonal ? 'block' : 'none';
+  document.getElementById('input-label').textContent = isPersonal ? 'Obsah osobního LinkedIn profilu' : 'Obsah firemní LinkedIn stránky';
+  document.getElementById('profile-input').placeholder = isPersonal
+    ? 'Sem vložte text z vašeho osobního profilu – headline, About sekci, pracovní zkušenosti, dovednosti...'
+    : 'Sem vložte text z firemní stránky – tagline, About sekci, specializace, případně ukázky postů...';
+  document.getElementById('btn-label').textContent = isPersonal ? 'Analyzovat profil' : 'Analyzovat firemní stránku';
+  document.getElementById('analyzer-result').classList.remove('visible');
+  document.getElementById('analyzer-error').classList.remove('visible');
+}
+
+async function analyzeProfile() {
+  const input = document.getElementById('profile-input').value.trim();
+  const btn = document.getElementById('analyze-btn');
+  const spinner = document.getElementById('btn-spinner');
+  const label = document.getElementById('btn-label');
+  const errorEl = document.getElementById('analyzer-error');
+  const resultEl = document.getElementById('analyzer-result');
+  const isPersonal = analyzerType === 'personal';
+
+  errorEl.classList.remove('visible');
+  resultEl.classList.remove('visible');
+
+  if (input.length < 50) {
+    errorEl.textContent = 'Vložte prosím alespoň obsah hlavní sekce (min. 50 znaků).';
+    errorEl.classList.add('visible');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  label.textContent = 'Analyzuji...';
+  spinner.style.display = 'block';
+
+  const personalPrompt = `Jsi expert na LinkedIn personal branding a optimalizaci profilů. Proveď hloubkovou analýzu níže uvedeného obsahu osobního LinkedIn profilu.
+
+Obsah profilu:
+"""
+${input}
+"""
+
+Analyzuj profil podle těchto kritérií:
+- Headline: jasnost, klíčová slova, value proposition, délka (max 220 znaků)
+- About sekce: příběh, struktura, CTA, klíčová slova, délka
+- Pracovní zkušenosti: popisy, výsledky s čísly, klíčová slova
+- Celková konzistence a profesionalita
+- Viditelnost ve vyhledávání
+- Potenciál pro generování leads a příležitostí
+
+Vrať POUZE JSON objekt, žádný text před ani za:
+{
+  "skore": <číslo 1-100>,
+  "skore_popis": "<jedna věta hodnotící celkový stav profilu>",
+  "pozitiva": ["<konkrétní silná stránka 1>", "<silná stránka 2>", "<silná stránka 3>"],
+  "zlepseni": [
+    "<konkrétní slabina 1 s vysvětlením proč>",
+    "<slabina 2>",
+    "<slabina 3>",
+    "<slabina 4>"
+  ],
+  "navrhy": [
+    {"pole": "Headline", "original": "<původní text nebo 'chybí'>", "navrh": "<konkrétní nový text dle vzorce Co děláte + Komu pomáháte + Výsledek>"},
+    {"pole": "About – úvodní věta", "original": "<původní nebo 'chybí'>", "navrh": "<konkrétní přepsaná úvodní věta>"},
+    {"pole": "<další pole které potřebuje zlepšení>", "original": "<původní>", "navrh": "<konkrétní návrh>"}
+  ],
+  "priorita": [
+    "<nejdůležitější akce č.1 – konkrétní a actionable>",
+    "<akce č.2>",
+    "<akce č.3>",
+    "<akce č.4>"
+  ],
+  "obsah": "<2-3 věty o tom, jaký obsah by měl tento člověk publikovat na základě jeho profilu, oboru a cíle>"
+}`;
+
+  const companyPrompt = `Jsi expert na LinkedIn marketing a firemní stránky. Proveď hloubkovou analýzu níže uvedeného obsahu firemní LinkedIn stránky.
+
+Obsah firemní stránky:
+"""
+${input}
+"""
+
+Analyzuj stránku podle těchto kritérií:
+- Tagline: jasnost, zapamatovatelnost, diferenciace
+- About sekce: přesvědčivost, klíčová slova, CTA, jasnost value proposition
+- Konzistence hlasu a tónu komunikace
+- Orientace na zákazníka vs. na firmu samotnou
+- Potenciál pro organický dosah a lead generation
+- Employer branding a přitažlivost pro talenty
+- SEO a vyhledatelnost na LinkedIn
+
+Vrať POUZE JSON objekt, žádný text před ani za:
+{
+  "skore": <číslo 1-100>,
+  "skore_popis": "<jedna věta hodnotící celkový stav firemní stránky>",
+  "pozitiva": ["<konkrétní silná stránka 1>", "<silná stránka 2>", "<silná stránka 3>"],
+  "zlepseni": [
+    "<konkrétní slabina 1 s vysvětlením proč>",
+    "<slabina 2>",
+    "<slabina 3>",
+    "<slabina 4>"
+  ],
+  "navrhy": [
+    {"pole": "Tagline", "original": "<původní text nebo 'chybí'>", "navrh": "<konkrétní nový tagline max 120 znaků>"},
+    {"pole": "About – úvodní věta", "original": "<původní nebo 'chybí'>", "navrh": "<konkrétní přepsaná úvodní věta orientovaná na zákazníka>"},
+    {"pole": "<další sekce která potřebuje zlepšení>", "original": "<původní>", "navrh": "<konkrétní návrh>"}
+  ],
+  "priorita": [
+    "<nejdůležitější akce č.1 – konkrétní a actionable>",
+    "<akce č.2>",
+    "<akce č.3>",
+    "<akce č.4>"
+  ],
+  "obsah": "<2-3 věty o tom, jaký typ obsahu by tato firma měla publikovat – formáty, témata, frekvence, na základě jejich oboru a cílové skupiny>"
+}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: isPersonal ? personalPrompt : companyPrompt }]
+      })
+    });
+
+    if (!response.ok) throw new Error('Chyba API: ' + response.status);
+
+    const data = await response.json();
+    const text = data.content.map(i => i.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+
+    const pct = Math.min(100, Math.max(0, result.skore));
+    const scoreColor = pct >= 70 ? 'var(--green)' : pct >= 45 ? 'var(--amber)' : 'var(--red)';
+
+    document.getElementById('score-num').textContent = pct + '/100';
+    document.getElementById('score-num').style.color = scoreColor;
+    document.getElementById('score-bar').style.width = pct + '%';
+    document.getElementById('score-bar').style.background = scoreColor;
+    document.getElementById('score-label').textContent = result.skore_popis || '';
+
+    document.getElementById('result-pozitiva').innerHTML = '<ul>' + (result.pozitiva || []).map(p => `<li>${p}</li>`).join('') + '</ul>';
+    document.getElementById('result-zlepseni').innerHTML = '<ul>' + (result.zlepseni || []).map(z => `<li>${z}</li>`).join('') + '</ul>';
+
+    document.getElementById('result-navrhy').innerHTML = (result.navrhy || []).map(n => `
+      <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">${n.pole}</div>
+        ${n.original && n.original !== 'chybí' && n.original !== 'chybí'
+          ? `<div style="font-size:12px;color:var(--faint);margin-bottom:8px;font-style:italic;line-height:1.5;">Současná verze: ${n.original}</div>`
+          : `<div style="font-size:12px;color:var(--red);margin-bottom:8px;">⚠ Tato sekce chybí nebo je prázdná</div>`}
+        <div style="font-size:13px;color:var(--green);line-height:1.6;">→ Návrh: ${n.navrh}</div>
+      </div>`).join('');
+
+    document.getElementById('result-priorita').innerHTML = '<ol style="padding-left:1.2rem">' +
+      (result.priorita || []).map(p => `<li style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:8px;">${p}</li>`).join('') + '</ol>';
+
+    document.getElementById('result-obsah').innerHTML = `<p>${result.obsah || ''}</p>`;
+
+    resultEl.classList.add('visible');
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    errorEl.textContent = 'Analýza se nezdařila. Zkuste to prosím znovu. (' + err.message + ')';
+    errorEl.classList.add('visible');
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    label.textContent = isPersonal ? 'Analyzovat profil' : 'Analyzovat firemní stránku';
+    spinner.style.display = 'none';
+  }
 }
 
 // ── INIT ──
