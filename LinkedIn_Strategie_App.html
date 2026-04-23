@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn snadno a rychle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #171b26;
+    --bg3: #1e2334;
+    --surface: #242840;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf2;
+    --muted: #8b91a8;
+    --faint: #4a5070;
+    --accent: #4f88f0;
+    --accent2: #7aa8f8;
+    --accent-bg: rgba(79,136,240,0.1);
+    --accent-border: rgba(79,136,240,0.25);
+    --green: #3ecf8e;
+    --green-bg: rgba(62,207,142,0.08);
+    --green-border: rgba(62,207,142,0.2);
+    --red: #f26a6a;
+    --red-bg: rgba(242,106,106,0.08);
+    --red-border: rgba(242,106,106,0.2);
+    --amber: #f5a623;
+    --amber-bg: rgba(245,166,35,0.08);
+    --amber-border: rgba(245,166,35,0.2);
+    --sidebar-w: 260px;
+    --header-h: 56px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+    font-size: 18px; font-weight: 700; color: white;
+    font-family: 'DM Serif Display', serif;
+  }
+  .sidebar-logo h1 {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .sidebar-logo p {
+    font-size: 11px; color: var(--muted); margin-top: 2px;
+  }
+
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+
+  .nav-section-label {
+    font-size: 10px; font-weight: 600; color: var(--faint);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 12px 20px 4px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    font-size: 13px; color: var(--muted);
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active {
+    color: var(--accent2);
+    border-left-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .nav-item .nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--faint);
+    line-height: 1.6;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    height: var(--header-h);
+    background: rgba(15,17,23,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+  }
+  .topbar-title { font-size: 14px; font-weight: 500; color: var(--muted); }
+  .topbar-tag {
+    font-size: 11px; padding: 3px 10px;
+    background: var(--accent-bg); color: var(--accent2);
+    border: 1px solid var(--accent-border);
+    border-radius: 20px; font-weight: 500;
+  }
+  .hamburger {
+    display: none; background: none; border: none;
+    color: var(--muted); font-size: 20px; cursor: pointer;
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    padding: 40px 40px 80px;
+    max-width: 820px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    margin-bottom: 40px;
+  }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .hero h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px; font-weight: 400; color: var(--text);
+    line-height: 1.2; margin-bottom: 14px;
+  }
+  .hero p { font-size: 15px; color: var(--muted); max-width: 560px; line-height: 1.75; }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin: 28px 0;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px; color: var(--red);
+    margin-bottom: 4px;
+  }
+  .stat-num.positive { color: var(--green); }
+  .stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* ── SECTION HEADINGS ── */
+  .section-h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; color: var(--text);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 14px; color: var(--muted);
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-h2 {
+    font-size: 16px; font-weight: 600; color: var(--text);
+    margin: 32px 0 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-h2::before {
+    content: '';
+    width: 3px; height: 16px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .section-h3 {
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin: 20px 0 10px;
+  }
+
+  /* ── PROSE ── */
+  .prose {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  /* ── INFO BOXES ── */
+  .info-box {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    border: 1px solid;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .info-box strong { display: block; margin-bottom: 4px; font-size: 13px; letter-spacing: 0.02em; }
+  .info-box.blue { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent2); }
+  .info-box.green { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+  .info-box.red { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+  .info-box.amber { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber); }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px; margin: 16px 0;
+  }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .card .card-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card.green .card-label { color: var(--green); }
+  .card.red .card-label { color: var(--red); }
+  .card.blue .card-label { color: var(--accent2); }
+  .card.amber .card-label { color: var(--amber); }
+  .card ul { list-style: none; padding: 0; }
+  .card ul li {
+    font-size: 13px; color: var(--muted);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .card ul li:last-child { border-bottom: none; }
+  .card ul li::before {
+    content: '';
+    position: absolute; left: 0; top: 13px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+  }
+  .card.green ul li::before { background: var(--green); }
+  .card.red ul li::before { background: var(--red); }
+  .card.blue ul li::before { background: var(--accent); }
+  .card.amber ul li::before { background: var(--amber); }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--surface);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+  }
+  .data-table td {
+    padding: 11px 14px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .data-table .highlight { color: var(--text); font-weight: 500; }
+  .data-table .green-text { color: var(--green); font-weight: 500; }
+  .data-table .red-text { color: var(--red); font-weight: 500; }
+  .data-table .amber-text { color: var(--amber); font-weight: 500; }
+
+  /* ── FORMAT CARDS ── */
+  .format-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px; margin: 16px 0;
+  }
+  .format-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color 0.2s;
+  }
+  .format-card:hover { border-color: var(--border2); }
+  .format-card .fc-name {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+  }
+  .format-card .fc-badge {
+    font-size: 10px; padding: 2px 7px;
+    border-radius: 20px; font-weight: 600;
+  }
+  .fc-badge.top { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .fc-badge.mid { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .fc-badge.low { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .format-card .fc-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── PRINCIPLE CARDS ── */
+  .principle-list { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .principle-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    transition: border-color 0.2s;
+  }
+  .principle-item:hover { border-color: var(--border2); }
+  .principle-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; color: var(--accent);
+    min-width: 28px; line-height: 1;
+    padding-top: 2px;
+  }
+  .principle-body {}
+  .principle-body strong { font-size: 14px; color: var(--text); display: block; margin-bottom: 3px; }
+  .principle-body span { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── CHECKLIST ── */
+  .checklist-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+  }
+  .progress-info { font-size: 13px; color: var(--muted); }
+  .progress-count { font-weight: 600; color: var(--text); }
+  .progress-track {
+    width: 100%; height: 4px;
+    background: var(--bg3);
+    border-radius: 2px; overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .cl-phase {
+    margin-bottom: 24px;
+  }
+  .cl-phase-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .cl-phase-title.before { background: var(--amber-bg); color: var(--amber); }
+  .cl-phase-title.during { background: var(--accent-bg); color: var(--accent2); }
+  .cl-phase-title.after { background: var(--green-bg); color: var(--green); }
+
+  .cl-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+  }
+  .cl-item:hover { background: var(--bg2); border-color: var(--border); }
+  .cl-item.checked { background: rgba(62,207,142,0.04); }
+
+  .cl-checkbox {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--faint);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    background: var(--bg3);
+  }
+  .cl-item.checked .cl-checkbox {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .cl-check-icon { display: none; }
+  .cl-item.checked .cl-check-icon {
+    display: block;
+    color: white; font-size: 12px; font-weight: 700; line-height: 1;
+  }
+
+  .cl-text {
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; flex: 1;
+    transition: color 0.2s;
+  }
+  .cl-item.checked .cl-text {
+    color: var(--faint);
+    text-decoration: line-through;
+  }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--border2); color: var(--text); }
+
+  /* ── ALGORITHM SIGNALS ── */
+  .signals-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 10px; margin: 16px 0;
+  }
+  .signal-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .signal-icon { font-size: 22px; margin-bottom: 8px; }
+  .signal-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .signal-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .signal-tip { font-size: 11px; color: var(--accent2); margin-top: 6px; line-height: 1.5; padding-top: 6px; border-top: 1px solid var(--border); }
+  .signal-weight {
+    display: inline-block; margin-top: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .w-high { background: var(--green-bg); color: var(--green); }
+  .w-med { background: var(--amber-bg); color: var(--amber); }
+  .w-low { background: var(--red-bg); color: var(--red); }
+
+  .card ul li a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    transition: color 0.15s;
+  }
+  .card.blue ul li a:hover { color: var(--accent2); }
+  .card.green ul li a:hover { color: var(--green); }
+  .card ul li a::after { content: ' →'; opacity: 0; transition: opacity 0.15s; font-size: 11px; }
+  .card ul li a:hover::after { opacity: 1; }
+
+  .persona-list { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+
+  .persona-block {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .persona-block.open { border-color: var(--border2); }
+
+  .persona-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    background: var(--bg2);
+    transition: background 0.15s;
+    user-select: none;
+  }
+  .persona-header:hover { background: var(--surface); }
+  .persona-block.open .persona-header { background: var(--surface); }
+
+  .persona-header-left { display: flex; align-items: center; gap: 14px; }
+  .persona-emoji { font-size: 22px; }
+  .persona-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .persona-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .persona-arrow {
+    color: var(--faint); font-size: 12px;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .persona-block.open .persona-arrow { transform: rotate(180deg); }
+
+  .persona-body {
+    display: none;
+    padding: 0 20px 20px;
+    background: var(--bg2);
+  }
+  .persona-block.open .persona-body { display: block; }
+
+  .topic-group { margin-top: 18px; }
+  .topic-group-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .topic-group-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .topic-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+  .topic-pill {
+    font-size: 12.5px; color: var(--muted);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 13px;
+    cursor: default;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .topic-pill:hover {
+    color: var(--text);
+    border-color: var(--border2);
+    background: var(--surface);
+  }
+
+  .persona-block.zamestnanec .persona-header { border-left: 3px solid var(--accent); }
+  .persona-block.freelancer .persona-header { border-left: 3px solid var(--green); }
+  .persona-block.brand .persona-header { border-left: 3px solid var(--amber); }
+
+  @media (max-width: 500px) { .topic-pills { gap: 5px; } .topic-pill { font-size: 12px; } }
+
+  .mobile-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 99;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .mobile-overlay.open { display: block; }
+    .main { margin-left: 0; }
+    .topbar { padding: 0 20px; }
+    .hamburger { display: block; }
+    .content { padding: 24px 20px 60px; }
+    .hero h2 { font-size: 28px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .cards-grid, .format-grid, .signals-grid { grid-template-columns: 1fr; }
+    .data-table { font-size: 12px; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">in</div>
+      <h1>LinkedIn snadno a rychle</h1>
+      <p>2025 – 2026 · Aktuální data</p>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Přehled</div>
+      <a class="nav-item active" onclick="showSection('prehled')" href="#">
+        <span class="nav-icon">📊</span> Klíčová čísla
+      </a>
+      <div class="nav-section-label">Strategie</div>
+      <a class="nav-item" onclick="showSection('firemni')" href="#">
+        <span class="nav-icon">🏢</span> Firemní stránka pod lupou
+      </a>
+      <a class="nav-item" onclick="showSection('algoritmus')" href="#">
+        <span class="nav-icon">⚙️</span> Jak algoritmus doopravdy funguje
+      </a>
+      <a class="nav-item" onclick="showSection('co-nefunguje')" href="#">
+        <span class="nav-icon">🔄</span> Tohle už nedělejte
+      </a>
+      <a class="nav-item" onclick="showSection('osobni')" href="#">
+        <span class="nav-icon">👤</span> TOP osobní profil
+      </a>
+      <div class="nav-section-label">Nástroje</div>
+      <a class="nav-item" onclick="showSection('checklist')" href="#">
+        <span class="nav-icon">✅</span> Check-list správného postu
+      </a>
+      <a class="nav-item" onclick="showSection('principy')" href="#">
+        <span class="nav-icon">💡</span> Desatero LinkedIn profilů
+      </a>
+      <a class="nav-item" onclick="showSection('formaty')" href="#">
+        <span class="nav-icon">🎬</span> Formáty na výběr
+      </a>
+      <a class="nav-item" onclick="showSection('temata')" href="#">
+        <span class="nav-icon">💬</span> Nevím, co psát
+      </a>
+      <div class="nav-section-label">Good to know</div>
+      <a class="nav-item" onclick="showSection('360brew')" href="#">
+        <span class="nav-icon">🤖</span> 360Brew
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      Zdroj: Algorithm Insights Report 2025<br>
+      Richard van der Blom<br>
+      1,8M postů · 58K profilů analyzováno
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbar-title">Přehled – Klíčová čísla</span>
+      <span class="topbar-tag">2025–2026</span>
+    </header>
+
+    <div class="content">
+
+      <!-- ══ PŘEHLED ══ -->
+      <div class="section active" id="section-prehled">
+        <div class="hero">
+          <div class="hero-eyebrow">LinkedIn snadno a rychle</div>
+          <h2>Algoritmus se změnil.<br>Váš brand ale zůstává</h2>
+
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-num">↓50%</div>
+            <div class="stat-label">organický dosah postů</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">↓25%</div>
+            <div class="stat-label">interakce s obsahem</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">↓59%</div>
+            <div class="stat-label">růst followerů</div>
+          </div>
+        </div>
+
+
+
+        <div class="section-h2">Osobní profil vs. firemní stránka</div>
+        <table class="data-table">
+          <thead><tr><th>Metrika</th><th>Osobní profil</th><th>Firemní stránka</th></tr></thead>
+          <tbody>
+            <tr><td>Průměrný dosah (% followerů)</td><td class="green-text">8–12 %</td><td class="red-text">1,6 %</td></tr>
+            <tr><td>Změna dosahu od 2024</td><td class="amber-text">−40 až −50 %</td><td class="red-text">−60 až −66 %</td></tr>
+            <tr><td>Podíl na LinkedIn feedu</td><td class="green-text">Dominantní</td><td class="red-text">1–2 % (bylo 7 %)</td></tr>
+            <tr><td>Výkon oproti druhé kategorii</td><td class="green-text">561× více dosahu</td><td class="red-text">−</td></tr>
+          </tbody>
+        </table>
+
+        <div class="section-h2">Uživatelé na LinkedIn</div>
+        <table class="data-table">
+          <thead><tr><th>Segment uživatelů</th><th>2025</th><th>2026</th><th>Trend</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">Aktivní tvůrci (1×+ týdně)</td><td>1,4 %</td><td class="green-text">1,8 %</td><td class="green-text">↑ Roste</td></tr>
+            <tr><td class="highlight">Příležitostní tvůrci (1×+ za 3 měs.)</td><td>8,9 %</td><td class="green-text">12,2 %</td><td class="green-text">↑ Roste</td></tr>
+            <tr><td class="highlight">Aktivní engageři (bez postování)</td><td>26,3 %</td><td class="green-text">29 %</td><td class="green-text">↑ Roste</td></tr>
+            <tr><td class="highlight">Tichá komunita (scrolleři)</td><td>53 %</td><td class="amber-text">42 %</td><td class="amber-text">↓ Klesá</td></tr>
+            <tr><td class="highlight">Dormantní členové (odcházejí)</td><td>10,4 %</td><td class="red-text">15 %</td><td class="red-text">↑ Roste</td></tr>
+          </tbody>
+        </table>
+        <div class="info-box blue">
+          <strong>Co to pro vás znamená</strong>
+          Více lidí tvoří, více lidí reaguje, zároveň více lidí LinkedIn opouští. Platforma se mění, a tím vzniká více příležitostí být na LinkedIn opravdu vidět. Začněte s budováním svého jména, své autority. Právě dnes.
+        </div>
+        <div class="cards-grid">
+          <div class="card blue">
+            <div class="card-label">Strategie</div>
+            <ul>
+              <li><a href="#" onclick="showSection('algoritmus')">Jak algoritmus doopravdy funguje</a></li>
+              <li><a href="#" onclick="showSection('co-nefunguje')">Tohle už nedělejte</a></li>
+              <li><a href="#" onclick="showSection('osobni')">TOP osobní profil</a></li>
+              <li><a href="#" onclick="showSection('firemni')">Firemní stránka pod lupou</a></li>
+            </ul>
+          </div>
+          <div class="card green">
+            <div class="card-label">Nástroje</div>
+            <ul>
+              <li><a href="#" onclick="showSection('checklist')">Check-list správného postu</a></li>
+              <li><a href="#" onclick="showSection('formaty')">Formáty na výběr</a></li>
+              <li><a href="#" onclick="showSection('principy')">Desatero LinkedIn profilů</a></li>
+              <li><a href="#" onclick="showSection('temata')">Nápadovníček aneb Nevím, co psát</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ALGORITMUS ══ -->
+      <div class="section" id="section-algoritmus">
+        <div class="section-h1">Jak algoritmus doopravdy funguje</div>
+        <div class="section-sub">Na co se u algoritmu v roce 2026 zaměřit?</div>
+
+        <div class="prose">Algoritmus LinkedInu prošel zásadní proměnou. Přestal odměňovat obsah cílený na maximální dosah nebo virální šíření. Místo toho hodnotí kvalitu interakcí a relevanci obsahu pro konkrétní profesní skupiny.</div>
+
+        <div class="section-h2">Klíčové signály algoritmu</div>
+        <div class="signals-grid">
+          <div class="signal-card">
+            <div class="signal-icon">🌐</div>
+            <div class="signal-name">Likes od ne-spojení (Interest Graph)</div>
+            <div class="signal-desc">Nový silný signál 2026. Likes od lidí, kteří vás nesledují, ale sdílejí vaše témata, znamenají pro algoritmus jediné: obsah je relevantní za hranicí vaší sítě. LinkedIn Interest Graph tak směřuje obsah přesně těm lidem, kteří jej chtějí číst.</div>
+            <div class="signal-tip">→ Pište topic-native jazykem svého oboru – specifická terminologie a insider framing přitahují správné cizince.</div>
+            <span class="signal-weight w-high">Vysoká váha</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">⏱️</div>
+            <div class="signal-name">Dwell time</div>
+            <div class="signal-desc">Jak dlouho čtenář u příspěvku skutečně zůstává. Scrollování karuselem nebo čtení dlouhého textu = silný pozitivní signál.</div>
+            <div class="signal-tip">→ Používej karusely, strukturovaný text a videa – formáty, u nichž lidé přirozeně zůstávají déle.</div>
+            <span class="signal-weight w-high">Vysoká váha</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">🔖</div>
+            <div class="signal-name">Saves a reposty</div>
+            <div class="signal-desc">Na čase nezáleží. Uložení či reportování příspěvku v 1. hodině má stejnou váhu, jako ty, které proběhnou za 3 týdny. Algoritmus hodnotí signál, ne jeho rychlost.</div>
+            <div class="signal-tip">→ Tvořte obsah hodný záložky: checklisty, frameworky, návody – věci, ke kterým se lidé vracejí.</div>
+            <span class="signal-weight w-high">Vysoká váha</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">💬</div>
+            <div class="signal-name">Smysluplné komentáře</div>
+            <div class="signal-desc">Komentáře přidávající hodnotu k tématu. Krátké emoji nebo jednoslovné reakce nesou minimální váhu.</div>
+            <div class="signal-tip">→ Odpovídejte na komentáře a rozvíjejte diskuzi – každá smysluplná výměna posiluje dosah příspěvku.</div>
+            <span class="signal-weight w-high">Vysoká váha</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">⚡</div>
+            <div class="signal-name">Engagement v první hodině</div>
+            <div class="signal-desc">75 % celkového organického dosahu se rozhoduje v prvních 60 minutách po publikaci. Toto je nejkritičtější okno.</div>
+            <div class="signal-tip">→ Buďte dostupní ihned po publikaci. Koordinujte sdílení s kolegy a odpovídejte na první komentáře okamžitě.</div>
+            <span class="signal-weight w-high">Kritické</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">🎯</div>
+            <div class="signal-name">Relevance pro skupinu</div>
+            <div class="signal-desc">Algoritmus 360Brew (nový AI model LinkedInu) rozumí kontextu přímo z textu. Obsah pro konkrétní profesní komunitu výrazně přebíjí obecné posty.</div>
+            <div class="signal-tip">→ Definujte 2–3 pilíře témat a u nich zůstaňte. Čím užší zaměření, tím přesnější distribuce správnému publiku.</div>
+            <span class="signal-weight w-med">Střední váha</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">♻️</div>
+            <div class="signal-name">Konzistence témat</div>
+            <div class="signal-desc">Pokud píšete opakovaně o stejném oboru, algoritmus se naučí, komu vás ukazovat. Čím konzistentnější, tím cílenější dosah.</div>
+            <div class="signal-tip">→ Držte se svých témat i tehdy, když post přinese méně dosahu. Algoritmus potřebuje čas, aby vás zařadil.</div>
+            <span class="signal-weight w-med">Střední váha</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">👍</div>
+            <div class="signal-name">Likes a reakce</div>
+            <div class="signal-desc">Stále relevantní, ale jejich váha výrazně klesla. Samostatně nestačí – algoritmus chce hlubší interakce.</div>
+            <div class="signal-tip">→ Likes berte jako základ, ne jako cíl. Soustřeďte se na obsah, který vyvolá komentáře a saves.</div>
+            <span class="signal-weight w-low">Nižší váha</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">🔗</div>
+            <div class="signal-name">Externí odkazy v postu</div>
+            <div class="signal-desc">Odkaz v komentáři je dnes penalizován stejně jako odkaz přímo v textu. LinkedIn nativní obsah (Newslettery, Články) nemá žádnou penalizaci a je nejlepší volbou.</div>
+            <div class="signal-tip">→ Vložte odkaz přímo do textu postu. Nejlepší je ale sdílet obsah nativně – přes LinkedIn Newsletter nebo Článek.</div>
+            <span class="signal-weight w-low">Penalizace</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">🤖</div>
+            <div class="signal-name">Detekce AI obsahu</div>
+            <div class="signal-desc">Algoritmus od března 2026 rozpoznává generický AI text. Obsah bez vlastního hlasu, příkladů a perspektivy je aktivně potlačován. AI je v pořádku jako pomoc, ne jako finální výstup.</div>
+            <div class="signal-tip">→ Používejte AI na základ a strukturu, ale vždy přidejte vlastní zkušenost, konkrétní příklad nebo neočekávaný úhel pohledu.</div>
+            <span class="signal-weight w-low">Penalizace</span>
+          </div>
+          <div class="signal-card">
+            <div class="signal-icon">🚫</div>
+            <div class="signal-name">Engagement bait</div>
+            <div class="signal-desc">Fráze jako „Napiš ANO pokud souhlasíš", „Tagni kolegu", „Dej like pro část 2" jsou od března 2026 NLP filtrem aktivně detekovány a potlačovány. Ptejte se otevřenými otázkami.</div>
+            <div class="signal-tip">→ Místo „Souhlasíte?" zkuste „Jak to řešíte ve svém týmu?" Otevřená otázka provokuje skutečnou diskuzi, ne jednoslovnou odpověď.</div>
+            <span class="signal-weight w-low">Silná penalizace</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ CO NEFUNGUJE ══ -->
+      <div class="section" id="section-co-nefunguje">
+        <div class="section-h1">Tohle už nedělejte</div>
+        <div class="section-sub">Přehled zastaralých taktik a jejich moderních náhrad</div>
+
+        <div class="cards-grid">
+          <div class="card red">
+            <div class="card-label">❌ Přestalo fungovat / penalizováno</div>
+            <ul>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Honba za viralitou a maximálním dosahem</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Postování každý den nebo vícekrát denně</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Odkaz v komentáři – dnes penalizováno stejně jako odkaz v textu</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Generický AI obsah bez vlastního hlasu a příkladů</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Obecný obsah pro co nejširší publikum</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Ignorování komentářů po publikaci</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:4px">OSOBNÍ</span>Engagement bait: „Napiš ANO", „Tagni kolegu", „Lajkni pro část 2"</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:4px">OSOBNÍ</span>Engagement pods – skupiny, kde si lidé vzájemně likují obsah. LinkedIn to pozná a účty potrestá omezením dosahu</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f26a6a;opacity:.7;margin-right:4px">OSOBNÍ</span>Slepé sdílení (repost bez vlastního komentáře)</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Textové posty bez vizuálního prvku</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Spoléhání se na organický dosah firemní stránky bez ambasadorů firmy/značky</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#f5a623;opacity:.9;margin-right:4px">FIREMNÍ</span>Firemní stránka jako digitální brožura = jen produkty a tiskové zprávy</li>
+            </ul>
+          </div>
+          <div class="card green">
+            <div class="card-label">✅ Co funguje nyní</div>
+            <ul>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Hloubka nad šířkou – obsah pro specifické profesní publikum</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>2–3 posty týdně s různými formáty</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Odkaz vložit do textu (odkaz v komentáři je penalizován)</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Nativní video, karusel nebo dokument PDF</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Odpovídat na komentáře do 60 minut</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:2px">OSOBNÍ</span><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>2–3 pilíře témat, konzistentní zaměření</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:4px">OSOBNÍ</span>Otevřené otázky místo engagement baitu: „Jak byste to řešili vy?"</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:4px">OSOBNÍ</span>Vlastní hlas, konkrétní příklady a osobní perspektiva v každém postu</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#3ecf8e;opacity:.9;margin-right:4px">OSOBNÍ</span>Sdílení cizího obsahu vždy s vlastním komentářem a přidanou hodnotou</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Investovat do osobních profilů zaměstnanců – jsou hlavní distribucí</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Aktivní employee advocacy – ambasadoři sdílejí obsah vlastními slovy</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Jasná obsahová identita stránky – hlas, téma, cílový čtenář</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Tagovat zaměstnance v postech (se svolením) pro dosah do jejich sítí</li>
+              <li><span style="font-size:10px;font-weight:700;letter-spacing:.06em;color:#4f88f0;opacity:.9;margin-right:4px">FIREMNÍ</span>Koordinovat engagement týmu v prvních 60 minutách po publikaci</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-h2">Proč se strategie musí změnit</div>
+        <table class="data-table">
+          <thead><tr><th>Taktika</th><th>Dříve</th><th>Dnes (2026)</th></tr></thead>
+          <tbody>
+            <tr><td>Frekvence postování</td><td class="amber-text">Denně nebo víc</td><td class="green-text">2–3× týdně</td></tr>
+            <tr><td>CTA v postu</td><td class="amber-text">„Napiš ANO / Tagni kolegu"</td><td class="red-text">Aktivně penalizováno NLP filtrem</td></tr>
+            <tr><td>Engagement pods</td><td class="amber-text">Běžná praxe</td><td class="red-text">Shadowban (97% detekce)</td></tr>
+            <tr><td>AI obsah bez úprav</td><td class="amber-text">Přijatelné</td><td class="red-text">Algoritmus ho rozpozná a potlačí</td></tr>
+            <tr><td>Odkaz v postu</td><td class="amber-text">Nevadilo</td><td class="green-text">Přijatelné – dej odkaz do textu</td></tr>
+            <tr><td>Odkaz v komentáři</td><td class="green-text">Spolehlivý workaround</td><td class="red-text">Penalizováno stejně jako v textu</td></tr>
+            <tr><td>Slepé sdílení (bez textu)</td><td class="amber-text">Počítalo se jako aktivita</td><td class="red-text">Prakticky neviditelné v feedu</td></tr>
+            <tr><td>Textové posty (firemní str.)</td><td class="amber-text">Dostatečné</td><td class="red-text">Multiplikátor 0,28</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ══ OSOBNÍ PROFIL ══ -->
+      <div class="section" id="section-osobni">
+        <div class="section-h1">TOP osobní profil</div>
+        <div class="section-sub">Optimalizace a obsahová strategie</div>
+
+        <div class="section-h2">Optimalizace profilu</div>
+
+        <div class="info-box blue">
+          <strong>Headline (220 znaků) – nejdůležitější pole profilu</strong>
+          Vzorec: Co děláte + Komu pomáháte + Konkrétní výsledek<br>
+          Příklad: <span style="color:#3ecf8e">„B2B marketing stratég | Pomáhám SaaS firmám generovat 3× více leadů přes LinkedIn | 500+ kampaní"</span><br>
+          Headline se zobrazuje u každého vašeho komentáře – neplýtvejte jím pouhým job titulem.
+        </div>
+
+        <div class="section-h3">Profilová fotka a banner</div>
+        <div class="prose">Posty s fotkami lidí dosahují až o 50 % lepšího engagementu. Používejte konzistentní tvář na profilové fotce i v příspěvcích. Banner vizuálně komunikuje vaše zaměření – nevynechejte ho.</div>
+
+        <div class="section-h3">Sekce O mně (About)</div>
+        <div class="prose">Pište příběhem: kdo jste, komu pomáháte, jaké výsledky přinášíte. Klíčová slova zahrňte přirozeně – ne nacpaná vedle sebe. LinkedIn se stává vyhledávačem pro profesní témata: čím lépe optimalizovaný profil, tím snazší discovery.</div>
+
+        <div class="section-h2">Obsahová strategie</div>
+
+        <div class="info-box amber">
+          <strong>Pravidlo 80/20</strong>
+          Zvolte 2–3 hlavní témata, o nichž píšete 80 % času. Zbylých 20 % tvoří novinky z oboru, firma nebo příležitostné osobní příspěvky. Algoritmus se učí vaše téma a ukazuje vás správnému publiku – čím konzistentnější, tím cílenější dosah.
+        </div>
+
+        <div class="section-h2">Frekvence a načasování</div>
+        <table class="data-table">
+          <thead><tr><th>Parametr</th><th>Doporučení</th><th>Poznámka</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">Počet postů týdně</td><td class="green-text">2–3</td><td>Konzistence = +120 % viditelnost</td></tr>
+            <tr><td class="highlight">Nejlepší dny</td><td class="green-text">Út–Čt</td><td>Pondělí a pátek slabší; víkendy nejnižší engagement</td></tr>
+            <tr><td class="highlight">Nejlepší čas</td><td class="green-text">10:00–12:00</td><td>Místní čas vašeho publika (Sprout Social, Buffer 2026)</td></tr>
+            <tr><td class="highlight">Délka textu</td><td class="green-text">800–1 500 znaků</td><td>Sweet spot dle dat</td></tr>
+            <tr><td class="highlight">Hashtagy</td><td class="green-text">2–3 cílené</td><td>Algoritmus 360Brew rozumí kontextu sám – 5+ hashtagů může snižovat dosah detekcí spamu</td></tr>
+            <tr><td class="highlight">AI obsah</td><td class="red-text">Pozor</td><td>Generický AI text algoritmus rozpozná – použijte AI jako základ, přidejte vlastní hlas a příklady</td></tr>
+          </tbody>
+        </table>
+
+        <div class="section-h2">Dostaňte se za vaše pole působnosti</div>
+        <div class="info-box blue">
+          <strong>LinkedIn nefunguje jen přes síť spojení</strong>
+          Interest Graph aktivně směruje váš obsah k lidem, kteří vás nesledují, ale sdílejí vaše téma. Likes od těchto cizinců jsou silným signálem relevance.
+        </div>
+        <div class="card blue" style="margin-bottom:12px">
+          <div class="card-label">3 taktiky pro dosah za hranici vaší sítě</div>
+          <ul>
+            <li><strong>Hook (wow) v první větě</strong> – Lidé mimo vaši síť vás neznají a nemají důvod číst dál. Začněte s insightem, kontraintuitivní statistikou nebo nepříjemnou pravdou. Rozuzlení napište až později.</li>
+            <li><strong>Topic-native language</strong> – Používejte terminologii svého oboru tak, jak mluví lidé v něm. LinkedIn Interest Graph identifikuje relevanci přes jazyk a doručí váš obsah těm správným lidem.</li>
+            <li><strong>Pište pro scrollery, ne pro komentátory</strong> – Většina lidí na LinkedIn nikdy nekomentuje. Scrollují, čtou a někdy dávají likes. Příspěvek musí být úplný i bez interakce – ne závislý na kontextu z komentářů.</li>
+          </ul>
+        </div>
+
+        <div class="section-h2">Engagement rituál</div>
+        <div class="info-box green">
+          <strong>Zlaté pravidlo</strong>
+          10 minut aktivního komentování na feedu PŘED publikací vlastního postu. Ihned po publikaci: 90 minut aktivního sledování a odpovídání na komentáře. Tím signalizujete algoritmu vysokou hodnotu příspěvku.
+        </div>
+      </div>
+
+      <!-- ══ FIREMNÍ ══ -->
+      <div class="section" id="section-firemni">
+        <div class="section-h1">Firemní stránka pod lupou</div>
+        <div class="section-sub">Nová realita, kterou přinesl rok 2026</div>
+
+        <div class="info-box red">
+          <strong>Kritická čísla</strong>
+          Z každých 100 followerů firemní stránky uvidí příspěvek průměrně jen 1,6 z nich. Ještě před dvěma lety to bylo 4–5. Firemní obsah dnes zabírá pouhé 1–2 % toho, co lidé na LinkedIn vidí – v roce 2021 to bylo 7 %. Jinými slovy: 9 z 10 firemních stránek mluví do prázdna. Píší o produktech, sdílejí tiskové zprávy – a nikdo to nečte.
+        </div>
+
+        <div class="info-box green">
+          <strong>Čím se liší top firemní stránky</strong>
+          Úspěch firemní stránky v roce 2026 nestojí na tom, jak často publikujete, ani na dokonalé grafice. Stojí na osobnosti a jasném zaměření. Top stránky si vybudovaly vlastní hlas, píší pro konkrétního čtenáře a nebojí se mít názor. Jsou živým kanálem, ne digitální brožurou.<br><br>
+          <strong>Placené možnosti a co firmě přinesou:</strong> LinkedIn nabízí Sponsored Content (boosting organických postů k přesně cílenému publiku), Lead Gen Forms (sběr kontaktů přímo v LinkedIn bez opuštění platformy) a Document Ads (propagace karuselů jako reklamy). Pro firmy, které chtějí kombinovat organiku s placeným dosáhem, je nejefektivnější boosting nejlépe fungujících organických postů – algoritmus pak pracuje za vás.
+        </div>
+
+        <div class="section-h2">Loajální zaměstnanec = záchrana firemní viditelnosti</div>
+        <div class="prose">Pouhé 3 % zaměstnanců sdílí firemní obsah, přesto generují 30 % celkového engagementu firmy. Obsah sdílený zaměstnanci dostává 8× více interakcí než samotná firemní stránka. 92 % B2B kupujících věří doporučením zaměstnanců víc než tradiční reklamě.</div>
+
+        <div class="section-h3">Jak postavit ambasadorství</div>
+        <div class="card blue" style="margin-bottom:12px">
+          <div class="card-label">Kroky k úspěchu</div>
+          <ul>
+            <li>Poskytněte zaměstnancům hotový personalizovaný obsah, ne nucené identické posty</li>
+            <li>Trénujte tým v osobním brandingu a tvorbě obsahu pravidelně</li>
+            <li>Uznání pro nejaktivnějšího zaměstnance měsíce</li>
+            <li>Označujte zaměstnance (se svolením) ve firemních postech</li>
+            <li>Ukazujte konkrétní lidi, jejich roli i výsledky</li>
+            <li>Dejte prostor zaměstnancům na interakci u příspěvku v jeho prvních 60 minutách po publikaci</li>
+          </ul>
+        </div>
+
+        <div class="section-h2">Co funguje na firemní stránce</div>
+        <table class="data-table">
+          <thead><tr><th>Formát</th><th>Výkon</th><th>Doporučení</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">Nativní video</td><td class="green-text">+69 %</td><td>Vertikální, max 60 s, titulky, mobilní</td></tr>
+            <tr><td class="highlight">Karusel (PDF)</td><td class="green-text">4× dosah</td><td>Vzdělávací, max 15 slidů</td></tr>
+            <tr><td class="highlight">Post s tvářemi lidí</td><td class="green-text">+50 %</td><td>Vždy preferujte lidi před logem</td></tr>
+            <tr><td class="highlight">Case studies</td><td class="green-text">Vysoký</td><td>Konkrétní čísla a výsledky</td></tr>
+            <tr><td class="highlight">LinkedIn Newsletter</td><td class="green-text">Rostoucí</td><td>Získávejte aktivně odběratele</td></tr>
+            <tr><td class="highlight">Textový post</td><td class="red-text">-</td><td>Prakticky neviditelný</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ══ FORMÁTY ══ -->
+      <div class="section" id="section-formaty">
+        <div class="section-h1">Formáty na výběr</div>
+        <div class="section-sub">Co funguje, co nefunguje a jak každý formát správně používat</div>
+
+        <div class="format-grid">
+          <div class="format-card">
+            <div class="fc-name">🎬 Nativní video <span class="fc-badge top">+69 % výkon</span></div>
+            <div class="fc-desc">Vertikální formát (9:16), 30–90 sekund. Hook v prvních 3 vteřinách. Vždy přidejte titulky – 72 % sleduje bez zvuku. Nahrajte přímo na LinkedIn, nikdy YouTube odkaz.</div>
+          </div>
+          <div class="format-card">
+            <div class="fc-name">📄 Karusel (PDF) <span class="fc-badge top">4× dosah</span></div>
+            <div class="fc-desc">Engagement rate 6,64 %. Vzdělávací obsah, frameworky, návody. Max 10–15 slidů. Silný první slide jako hook. Díky scrollování zvyšuje dwell time.</div>
+          </div>
+          <div class="format-card">
+            <div class="fc-name">📑 Dokument / PDF <span class="fc-badge top">Silné saves</span></div>
+            <div class="fc-desc">Skvělý pro checklisty, šablony, playbooks. Lidé si je ukládají – silný signál pro algoritmus. Podobný výkon jako karusel.</div>
+          </div>
+          <div class="format-card">
+            <div class="fc-name">📝 Text + fotka <span class="fc-badge mid">Střední výkon</span></div>
+            <div class="fc-desc">Nejrychlejší formát. Funguje pro thought leadership a příběhy. Fotka s lidskou tváří zvyšuje výkon o 50 %. Hook v prvních 210 znacích je alfa a omega.</div>
+          </div>
+          <div class="format-card">
+            <div class="fc-name">❓ Anketa (Poll) <span class="fc-badge mid">Nízký dosah</span></div>
+            <div class="fc-desc">Generuje engagement, ale nízký organický dosah. Používejte ke sběru podnětů nebo jako hook k navazujícímu obsahu.</div>
+          </div>
+          <div class="format-card">
+            <div class="fc-name">📰 Newsletter <span class="fc-badge top">Rostoucí</span></div>
+            <div class="fc-desc">LinkedIn aktivně podporuje newslettery (konkurence Substacku). Výborné pro budování autority a odběratelů. Dlouhodobá investice.</div>
+          </div>
+          <div class="format-card">
+            <div class="fc-name">✏️ Čistý text <span class="fc-badge low">−18 % eng.</span></div>
+            <div class="fc-desc">Engagement klesl o 18 %. Na firemní stránce multiplikátor 0,28. Pouze pokud je obsah výjimečně silný – jinak přidejte vizuál.</div>
+          </div>
+          <div class="format-card">
+            <div class="fc-name">🔗 Ext. odkaz v postu <span class="fc-badge low">Penalizace</span></div>
+            <div class="fc-desc">Odkaz v komentáři je dnes penalizován stejně jako odkaz v textu. Vložte odkaz přímo do textu postu, nebo sdílejte obsah nativně přes LinkedIn Newsletter či Článek.</div>
+          </div>
+        </div>
+
+        <div class="section-h2">Struktura karuselu (krok za krokem)</div>
+        <table class="data-table">
+          <thead><tr><th>Slide</th><th>Obsah</th><th>Tip</th></tr></thead>
+          <tbody>
+            <tr><td class="highlight">1 – Hook</td><td>Silný titulek slibující konkrétní výsledek nebo řešení</td><td>Toto rozhoduje, zda lidé budou scrollovat</td></tr>
+            <tr><td class="highlight">2–N – Obsah</td><td>Každý slide = jedna myšlenka, minimálně textu</td><td>Vizuálně čitelné na mobilu, kontrast</td></tr>
+            <tr><td class="highlight">Poslední – CTA</td><td>Shrnutí nebo výzva k uložení / komentáři</td><td>„Uložte si to na později" funguje dobře</td></tr>
+          </tbody>
+        </table>
+        <div class="prose">Doporučená délka: 7–15 slidů. Font min. 24pt pro body text. Vysoký kontrast textu a pozadí. Komprimujte PDF pro rychlé načítání.</div>
+      </div>
+
+      <!-- ══ CHECKLIST ══ -->
+      <div class="section" id="section-checklist">
+        <div class="section-h1">Check-list správného postu</div>
+        <div class="section-sub">Projděte každý bod před i po publikaci pro top výsledky.</div>
+
+        <div class="checklist-header">
+          <div class="progress-info">
+            Dokončeno: <span class="progress-count" id="cl-count">0 / 18</span>
+          </div>
+          <button class="reset-btn" onclick="resetChecklist()">Resetovat</button>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="cl-progress" style="width: 0%"></div>
+        </div>
+
+        <div class="cl-phase">
+          <div class="cl-phase-title before">⏰ Před publikací</div>
+
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-1">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Komentujte 5–10 relevantních postů před publikací</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-2">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Hook v prvních 210 znacích, který zastaví i scrollery</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-3">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Příspěvek řeší pouze jedno konkrétní téma</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-4">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Text má 800–1 500 znaků / plnohodnotný karusel / video s nosným obsahem</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-5">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Formát odpovídá cíli: karusel/video = vzdělávání, text+foto = thought leadership, anketa = engagement</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-6">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Odkaz je přímo v textu příspěvku</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-7">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">2–3 cílené hashtagy</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-8">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Krátké odstavce (2–3 delší věty), hodně prázdného místa</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-9">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Výzva k akci formou otevřené otázky</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-10">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Žádný engagement bait ve stylu „Napište ANO", „Tagněte kolegu"</div>
+          </div>
+        </div>
+
+        <div class="cl-phase">
+          <div class="cl-phase-title during">⚡ Hned po publikaci</div>
+
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-11">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Odpovídejte na každý komentář přicházející v prvních 60 minutách</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-12">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Pokračujte v engagementu na feedu</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-13">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Sledujte, kdo sdílí / ukládá váš příspěvek</div>
+          </div>
+        </div>
+
+        <div class="cl-phase">
+          <div class="cl-phase-title after">✅ Po 24–48 hodinách</div>
+
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-14">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Odpovězte na všechny zbývající komentáře</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-15">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Zkontrolujte analytiku: impressions, saves, shares</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-16">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Vymyslete recyklaci obsahu novým formátem</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-17">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Přidejte si nové kontakty z diskuze či příspěvku</div>
+          </div>
+          <div class="cl-item" onclick="toggleCheck(this)" data-id="cl-18">
+            <div class="cl-checkbox"><span class="cl-check-icon">✓</span></div>
+            <div class="cl-text">Zaznamenejte výsledky do content kalendáře</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TÉMATA ══ -->
+      <div class="section" id="section-temata">
+        <div class="section-h1">Nevím, co psát</div>
+        <div class="section-sub">Za koho dnes budete psát?</div>
+
+        <div class="prose">Klikněte a rozbalte nabídku. Témata jsou rozdělena do skupin – pracovní, kariérní, osobní a další. Slouží jako inspirace, ne jako předpis. Jedno téma = jeden post.</div>
+
+        <div class="persona-list">
+
+          <!-- ── ZAMĚSTNANEC ── -->
+          <div class="persona-block zamestnanec" id="pb-zamestnanec">
+            <div class="persona-header" onclick="togglePersona('zamestnanec')">
+              <div class="persona-header-left">
+                <span class="persona-emoji">💼</span>
+                <div>
+                  <div class="persona-title">Jsem zaměstnanec</div>
+                  <div class="persona-subtitle">Pracuji ve firmě, chci budovat viditelnost a odbornost</div>
+                </div>
+              </div>
+              <span class="persona-arrow">▼</span>
+            </div>
+            <div class="persona-body">
+
+              <div class="topic-group">
+                <div class="topic-group-label">Z práce a oboru</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Co jsem se tento týden naučil</span>
+                  <span class="topic-pill">Tip nebo trik z mého oboru</span>
+                  <span class="topic-pill">Nástroj, který mi šetří čas</span>
+                  <span class="topic-pill">Jak náš tým řeší konkrétní problém</span>
+                  <span class="topic-pill">Za scénou: jak vypadá můj pracovní den</span>
+                  <span class="topic-pill">Projekt, na kterém právě pracuji</span>
+                  <span class="topic-pill">Chyba, kterou jsem udělal a co mě naučila</span>
+                  <span class="topic-pill">Otázka do oboru: jak to řešíte vy?</span>
+                  <span class="topic-pill">Nejčastější mýtus v mém oboru</span>
+                  <span class="topic-pill">Co si myslím o aktuálním trendu</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Kariéra a profesní růst</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Proč jsem si vybral tento obor</span>
+                  <span class="topic-pill">Co mě na práci nejvíc baví</span>
+                  <span class="topic-pill">Kariérní milník: výročí, povýšení, nový projekt</span>
+                  <span class="topic-pill">Co bych věděl, kdybych začínal znovu</span>
+                  <span class="topic-pill">Tipy pro lidi, kteří chtějí dělat to co já</span>
+                  <span class="topic-pill">Jak jsem se dostal na svou pozici</span>
+                  <span class="topic-pill">Dovednost, kterou jsem se naučil mimo školu</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Osobní perspektiva</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Kniha nebo podcast, který mi změnil pohled</span>
+                  <span class="topic-pill">Hodnota, která mě řídí v práci</span>
+                  <span class="topic-pill">Moment, kdy jsem pochyboval – a jak jsem to zvládl</span>
+                  <span class="topic-pill">Člověk nebo mentor, který mě ovlivnil</span>
+                  <span class="topic-pill">Co mě překvapilo na mém oboru</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Firemní obsah (employer branding)</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Proč pracuji tam, kde pracuji</span>
+                  <span class="topic-pill">Co mi dala firma, co jinde nenajdu</span>
+                  <span class="topic-pill">Teamová kultura v praxi – konkrétní příklad</span>
+                  <span class="topic-pill">Projekt, na který jsem pyšný jako tým</span>
+                  <span class="topic-pill">Co hledáme v nových kolezích</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── FREELANCER ── -->
+          <div class="persona-block freelancer" id="pb-freelancer">
+            <div class="persona-header" onclick="togglePersona('freelancer')">
+              <div class="persona-header-left">
+                <span class="persona-emoji">🧩</span>
+                <div>
+                  <div class="persona-title">Jsem freelancer</div>
+                  <div class="persona-subtitle">Pracuji na volné noze, hledám klienty a buduju reputaci</div>
+                </div>
+              </div>
+              <span class="persona-arrow">▼</span>
+            </div>
+            <div class="persona-body">
+
+              <div class="topic-group">
+                <div class="topic-group-label">Odbornost a edukace</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Case study: klient, problém, řešení, výsledek</span>
+                  <span class="topic-pill">Nejčastější chyba mých klientů</span>
+                  <span class="topic-pill">Otázky, které se mě klienti ptají nejčastěji</span>
+                  <span class="topic-pill">Mýtus v mém oboru, který vyvrátím</span>
+                  <span class="topic-pill">Jak poznám dobrého klienta</span>
+                  <span class="topic-pill">Tip, který klientům šetří čas nebo peníze</span>
+                  <span class="topic-pill">Jak vypadá můj pracovní proces krok za krokem</span>
+                  <span class="topic-pill">Co dělám jinak než ostatní v oboru</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Byznys a freelancing</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Jak jsem získal svého prvního klienta</span>
+                  <span class="topic-pill">Jak přemýšlím o ceně a hodnotě</span>
+                  <span class="topic-pill">Nástroje, bez kterých bych nepřežil</span>
+                  <span class="topic-pill">Projekt, který nešel podle plánu – a co z toho plyne</span>
+                  <span class="topic-pill">Co mi nikdo neřekl o freelancingu</span>
+                  <span class="topic-pill">Jak vypadá můj měsíc: co fungovalo, co ne</span>
+                  <span class="topic-pill">Red flags u potenciálního klienta</span>
+                  <span class="topic-pill">Jak komunikuji s klienty o termínech</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Osobní příběh</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Proč jsem šel na volnou nohu</span>
+                  <span class="topic-pill">Co mi freelancing dal – a co vzal</span>
+                  <span class="topic-pill">Work-life balance při práci z domova</span>
+                  <span class="topic-pill">Největší přelom v mé freelance kariéře</span>
+                  <span class="topic-pill">Moment, kdy jsem chtěl vzdát – a proč jsem nepřestal</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Získávání klientů</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Pro koho pracuji a komu mohu pomoci</span>
+                  <span class="topic-pill">Výsledek, na který jsem nejhrdější</span>
+                  <span class="topic-pill">Jak vypadá spolupráce se mnou</span>
+                  <span class="topic-pill">Referencia nebo feedback od klienta</span>
+                  <span class="topic-pill">Otevřená kapacita – aktuálně přijímám projekty</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── PERSONAL BRAND ── -->
+          <div class="persona-block brand" id="pb-brand">
+            <div class="persona-header" onclick="togglePersona('brand')">
+              <div class="persona-header-left">
+                <span class="persona-emoji">🚀</span>
+                <div>
+                  <div class="persona-title">Buduji personal brand</div>
+                  <div class="persona-subtitle">Chci být vidět jako expert, influencer nebo thought leader</div>
+                </div>
+              </div>
+              <span class="persona-arrow">▼</span>
+            </div>
+            <div class="persona-body">
+
+              <div class="topic-group">
+                <div class="topic-group-label">Odborné poznatky a názory</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Můj pohled na aktuální trend v oboru</span>
+                  <span class="topic-pill">Kontroverze v oboru – tady stojím já</span>
+                  <span class="topic-pill">Data nebo výzkum, který mě zaujal + můj komentář</span>
+                  <span class="topic-pill">Predikce: kam se obor ubírá v příštích 2 letech</span>
+                  <span class="topic-pill">Mýtus, který chci veřejně vyvrátit</span>
+                  <span class="topic-pill">Moje metodologie nebo framework</span>
+                  <span class="topic-pill">Proč se v oboru přestávám s názorem X – a věřím Y</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Příběhy a zkušenosti</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Zlomový moment v mé kariéře</span>
+                  <span class="topic-pill">Chyba, ze které jsem se nejvíc poučil</span>
+                  <span class="topic-pill">Úspěch s konkrétními čísly a kontextem</span>
+                  <span class="topic-pill">Za scénou: jak tvořím obsah / pracuji</span>
+                  <span class="topic-pill">Co mi dal mentor nebo coach</span>
+                  <span class="topic-pill">Cesta: kde jsem byl před 3 lety vs. dnes</span>
+                  <span class="topic-pill">Moment, kdy jsem si nevěřil – a co se změnilo</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Komunita a diskuze</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Otevřená otázka k diskuzi v oboru</span>
+                  <span class="topic-pill">Reakce na novinku nebo event v oboru</span>
+                  <span class="topic-pill">Sdílení cizího názoru + můj pohled</span>
+                  <span class="topic-pill">Co mě překvapilo na LinkedIn komunitě</span>
+                  <span class="topic-pill">Shrnutí konference nebo eventu</span>
+                  <span class="topic-pill">Největší insight z knihy, která tě zasáhla</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Hodnoty a přístup</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">Zásada, podle které pracuji a proč</span>
+                  <span class="topic-pill">Co odmítám dělat – a proč</span>
+                  <span class="topic-pill">Jak se rozhoduji v nejistotě</span>
+                  <span class="topic-pill">Co pro mě znamená úspěch (a co ne)</span>
+                  <span class="topic-pill">Věc, kterou jsem přestal dělat – a nelituji</span>
+                </div>
+              </div>
+
+              <div class="topic-group">
+                <div class="topic-group-label">Formáty pro silný dosah</div>
+                <div class="topic-pills">
+                  <span class="topic-pill">„X věcí, které bych věděl, kdybych začínal"</span>
+                  <span class="topic-pill">„Přestal jsem věřit X. Tady je proč."</span>
+                  <span class="topic-pill">„Udělal jsem chybu. Veřejně."</span>
+                  <span class="topic-pill">„Po 5 letech v oboru vím jedno jistě..."</span>
+                  <span class="topic-pill">Mini-návod v 5 krocích jako karusel</span>
+                  <span class="topic-pill">Krátké video: 1 insight za 60 sekund</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <div class="info-box blue" style="margin-top: 8px;">
+          <strong>Jak s tím pracovat</strong>
+          Každý nápad je odrazovým můstkem – ne hotový post. Vezměte téma, přidejte svůj konkrétní příklad, číslo nebo zkušenost, a máte základ pro příspěvek s vlastním hlasem. Pamatujte: algoritmus odměňuje autenticitu, ne šablony.
+        </div>
+      </div>
+
+      <!-- ══ PRINCIPY ══ -->
+      <div class="section" id="section-principy">
+        <div class="section-h1">Desatero LinkedIn profilů</div>
+        <div class="section-sub">Rychlé shrnutí celé strategie</div>
+
+        <div class="principle-list">
+          <div class="principle-item">
+            <div class="principle-num">1</div>
+            <div class="principle-body">
+              <strong>Relevance &gt; dosah</strong>
+              <span>LinkedIn záměrně snižuje dosah, ale zvyšuje relevanci. Menší publikum, správní lidé. Optimalizujte pro kvalitu čtenářů, ne jejich počet.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">2</div>
+            <div class="principle-body">
+              <strong>Osobní profil &gt; firemní stránka</strong>
+              <span>561× větší dosah. Investujte do osobních profilů vedení a klíčových zaměstnanců jako primárního distribučního kanálu firmy.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">3</div>
+            <div class="principle-body">
+              <strong>2–3 posty týdně – ne méně, ne více</strong>
+              <span>Konzistence přináší +120 % viditelnosti oproti sporadickému postování. Denní postování naopak snižuje engagement na post.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">4</div>
+            <div class="principle-body">
+              <strong>Zlatá hodina</strong>
+              <span>75 % dosahu se rozhoduje v prvních 60 minutách po publikaci. Buďte dostupní, odpovídejte rychle a koordinujte engagement týmu.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">5</div>
+            <div class="principle-body">
+              <strong>Saves a reposty jsou nová měna – a načasování nezáleží</strong>
+              <span>Tvořte obsah hodný záložky: checklisty, frameworky, návody. Klíčové zjištění 2026: save nebo repost v první hodině nese stejnou váhu jako ten za 3 týdny. Algoritmus hodnotí signál, ne jeho rychlost.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">6</div>
+            <div class="principle-body">
+              <strong>Karusel a video vedou – text sám o sobě nestačí</strong>
+              <span>Karusel = 4× dosah, video = +69 % výkon. Textový post na firemní stránce = multiplikátor 0,28. Volba formátu rozhoduje.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">7</div>
+            <div class="principle-body">
+              <strong>Odkaz v komentáři = stejná penalizace jako v textu</strong>
+              <span>Workaround „odkaz do prvního komentáře" je dnes penalizován stejně jako odkaz přímo v textu postu. Vložte odkaz do textu, nebo ideálně sdílejte obsah nativně přes LinkedIn Newsletter či Článek – ty nemají žádnou penalizaci.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">8</div>
+            <div class="principle-body">
+              <strong>Zaměstnanci firmy jako její ambasadoři</strong>
+              <span>3 % zaměstnanců sdílí obsah, ale generují 30 % celkového firemního engagementu. Postavte strukturovaný ambasadorský program.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">9</div>
+            <div class="principle-body">
+              <strong>Hook je alfa a omega každého postu</strong>
+              <span>Prvních 210 znaků rozhoduje, zda čtenář klikne „zobrazit více". Žádný kompromis. Prvá věta = nejdůležitější věta celého postu.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">10</div>
+            <div class="principle-body">
+              <strong>Pište pro scrollery, ne pro komentátory</strong>
+              <span>Většina lidí na LinkedIn nikdy nekomentuje – scrollují, čtou a někdy likují. Post musí být uspokojivý konzumovat i bez interakce. LinkedIn je síť: komentujte, odpovídejte, budujte vztahy. Ale obsah tvořte pro tiché čtenáře.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- ══ 360BREW ══ -->
+      <div class="section" id="section-360brew">
+        <div class="section-h1">360Brew</div>
+        <div class="section-sub">Nový AI mozek LinkedInu – co to znamená pro tvůj obsah</div>
+
+        <div class="prose">LinkedIn v roce 2026 nahradil starý systém hodnocení obsahu novým AI modelem nazvaným <strong>360Brew</strong>. Místo prostého počítání likes a komentářů teď algoritmus hodnotí obsah podobně jako lidský editor – posuzuje jeho kontext, hloubku a autenticitu.</div>
+
+        <div class="section-h2">Jak 360Brew funguje</div>
+        <div class="cards-grid">
+          <div class="card blue">
+            <div class="card-label">Co model hodnotí</div>
+            <ul>
+              <li>Čte kontext přímo z textu – nepotřebuje hashtagy jako navigaci</li>
+              <li>Měří dwell time: jak dlouho čtenář u příspěvku skutečně zůstává</li>
+              <li>Sleduje hloubku komentářů, ne jen jejich počet</li>
+              <li>Vyhodnocuje saves, reposty a soukromé sdílení jako signály hodnoty</li>
+              <li>Rozpoznává téma a směruje obsah k relevantnímu publiku přes Interest Graph</li>
+            </ul>
+          </div>
+          <div class="card red">
+            <div class="card-label">Co model trestá</div>
+            <ul>
+              <li>Engagement bait: „Napiš ANO", „Tagni kolegu", „Lajkni pro část 2"</li>
+              <li>Generický AI obsah bez vlastního hlasu a konkrétních příkladů</li>
+              <li>Engagement pods – detekuje reciproční vzorce s 97% přesností</li>
+              <li>Click bounce: uživatel klikne a okamžitě odejde = penalizace</li>
+              <li>Příliš mnoho hashtagů (5+) jako spam signál</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-h2">Testovací okno po publikaci</div>
+        <div class="info-box amber">
+          <strong>Jak 360Brew rozhoduje o dosahu</strong>
+          Po publikaci algoritmus ukáže post nejdříve malé testovací skupině. Pokud v prvních 60 minutách dostane silné interakce – komentáře, saves, vysoký dwell time – dosah se rozšíří do dalších vln. Pokud signály chybí, distribuce se zastaví. Proto je engagement ihned po publikaci tak kritický.
+        </div>
+
+        <div class="section-h2">Co to mění v praxi</div>
+        <table class="data-table">
+          <thead><tr><th>Dříve stačilo</th><th>Dnes 360Brew vyžaduje</th></tr></thead>
+          <tbody>
+            <tr><td class="amber-text">Hodně hashtagů pro zařazení obsahu</td><td class="green-text">Jasný odborný hlas a topic-native jazyk</td></tr>
+            <tr><td class="amber-text">Odkaz v komentáři jako workaround</td><td class="green-text">Odkaz přímo v textu, nebo nativní obsah (Newsletter, Článek)</td></tr>
+            <tr><td class="amber-text">Objem likes jako měřítko úspěchu</td><td class="green-text">Saves, reposty a dwell time</td></tr>
+            <tr><td class="amber-text">AI text jako finální výstup</td><td class="green-text">AI jako základ, vlastní hlas jako výsledek</td></tr>
+            <tr><td class="amber-text">Engagement pods pro první vlnu</td><td class="green-text">Koordinovaný organický tým v první hodině</td></tr>
+          </tbody>
+        </table>
+
+        <div class="info-box blue" style="margin-top: 24px;">
+          <strong>Zdroj</strong>
+          360Brew – LinkedIn Engineering, 2025–2026. Analýzy: DigitalApplied, SourceGeek, UpGrowth LinkedIn Algorithm Report 2026.
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// ── NAVIGATION ──
+const sections = {
+  'prehled': 'Přehled – Klíčová čísla',
+  'algoritmus': 'Strategie – Jak algoritmus doopravdy funguje',
+  'co-nefunguje': 'Strategie – Tohle už nedělejte',
+  'osobni': 'Strategie – TOP osobní profil',
+  'firemni': 'Strategie – Firemní stránka pod lupou',
+  'formaty': 'Strategie – Formáty na výběr',
+  'checklist': 'Nástroje – Check-list správného postu',
+  'temata': 'Nástroje – Nevím, co psát',
+  'principy': 'Nástroje – Desatero LinkedIn profilů',
+  '360brew': 'Good to know – 360Brew'
+};
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
+      n.classList.add('active');
+    }
+  });
+  document.getElementById('topbar-title').textContent = sections[id] || '';
+  window.scrollTo(0, 0);
+  closeSidebar();
+  return false;
+}
+
+// ── SIDEBAR MOBILE ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ── CHECKLIST ──
+const STORAGE_KEY = 'li_checklist_2025';
+const TOTAL = 18;
+
+function loadChecklist() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    Object.entries(saved).forEach(([id, checked]) => {
+      if (checked) {
+        const el = document.querySelector('[data-id="' + id + '"]');
+        if (el) el.classList.add('checked');
+      }
+    });
+    updateProgress();
+  } catch(e) {}
+}
+
+function saveChecklist() {
+  const state = {};
+  document.querySelectorAll('.cl-item').forEach(el => {
+    state[el.dataset.id] = el.classList.contains('checked');
+  });
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  saveChecklist();
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = document.querySelectorAll('.cl-item.checked').length;
+  const pct = Math.round((done / TOTAL) * 100);
+  document.getElementById('cl-progress').style.width = pct + '%';
+  document.getElementById('cl-count').textContent = done + ' / ' + TOTAL;
+}
+
+function resetChecklist() {
+  document.querySelectorAll('.cl-item').forEach(el => el.classList.remove('checked'));
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  updateProgress();
+}
+
+function togglePersona(id) {
+  const block = document.getElementById('pb-' + id);
+  block.classList.toggle('open');
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', function() {
+  loadChecklist();
+});
+</script>
+</body>
+</html>
